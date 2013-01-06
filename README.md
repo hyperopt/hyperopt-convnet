@@ -10,8 +10,10 @@ architectural hyperparameters for optimization by
 
 1. Requirements:
 
-   * a Python/Scipy stack is a good basis for installing this
-     software (numpy, scipy).
+
+   * A Python/Numpy/Scipy stack.
+     The Python package requirements are listed in
+     [requirements.txt](./requirements.txt).
 
    * Optional (but strongly recommended) is an NVIDIA GPU device at least as
      fast as, say, a GTX280, and CUDA. See Theano's documentation for setting
@@ -33,9 +35,6 @@ architectural hyperparameters for optimization by
    Consider installing this within your user account (`--user`) or within a
    virtualenv to avoid installing this package system-wide, and requiring root
    privileges.
-
-   The Python package requirements are listed in
-   [requirements.txt](./requirements.txt).
 
 
 # Testing
