@@ -9,6 +9,7 @@ architectural hyperparameters for optimization by
 # Installation
 
 1. Requirements:
+
    * a Python/Scipy stack is a good basis for installing this
      software (numpy, scipy).
 
@@ -72,7 +73,9 @@ To get more of a sense about what's going on, read through
 
 1. Set up a mongodb process for inter-process communication.
 
+   `
     mongod --dbpath . --port PORT --directoryperdb --fork --journal --logpath log.log --nohttpinterface
+   `
 
     If this machine is visible to the internet, you should either bind mongod
     to the local loopback address and connect to the database via an ssh
@@ -81,12 +84,16 @@ To get more of a sense about what's going on, read through
 2. Start an asynchronous search process, that connects to the mongodb and
    polls a work queue created there.
 
+   `
     shovel cifar10.random localhost PORT
+   `
 
 3. Start one or more generic hyperopt worker processes to crank through the
    trials of the experiment.
 
-    ssh WORKNODE hyperopt-mongo-worker --mongo=localhost:PORT/cifar_db1
+   `
+   ssh WORKNODE hyperopt-mongo-worker --mongo=localhost:PORT/cifar_db1
+   `
 
    If you have a cluster with a queue system (e.g. Torque, PBS, etc.) then use
    that system to schedule a few hyperopt-mongo-worker processes. When they
