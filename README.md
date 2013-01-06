@@ -57,7 +57,7 @@ A few larger end-to-end regression tests can be run from the
 # Running An Experiment in Parallel with MongoDB
 
 Running hyperparameter optimization on large convolutional networks for data
-sets such as [LFW](http://http://vis-www.cs.umass.edu/lfw/)
+sets such as [LFW](http://vis-www.cs.umass.edu/lfw/)
 and [CIFAR10](http://www.cs.toronto.edu/~kriz/cifar.html) takes a significant amount of time:
 expect it to take about a GPU-week.
 This cannot be completely parallelized (Bayesian optimization works on the
