@@ -57,7 +57,8 @@ A few larger end-to-end regression tests can be run from the
 # Running An Experiment in Parallel with MongoDB
 
 Running hyperparameter optimization on large convolutional networks for data
-sets such as [LFW](XXX) and [CIFAR10](XXX) takes a significant amount of time:
+sets such as [LFW](http://http://vis-www.cs.umass.edu/lfw/)
+and [CIFAR10](http://www.cs.toronto.edu/~kriz/cifar.html) takes a significant amount of time:
 expect it to take about a GPU-week.
 This cannot be completely parallelized (Bayesian optimization works on the
 basis of feedback about the fitness landscape after all), but in my experience
@@ -68,7 +69,8 @@ an hour or two, and be done in a day.
 What follows here is a sketch of the unix commands you would need to do to
 make this happen.
 To get more of a sense about what's going on, read through
-[hyperopt documentation on using mongo](XXX).
+[hyperopt documentation on using
+mongo](https://github.com/jaberg/hyperopt/wiki/Parallelizing-search).
 
 
 1. Set up a mongodb process for inter-process communication.
