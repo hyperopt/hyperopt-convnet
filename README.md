@@ -1,5 +1,5 @@
-Hyperparameter Optimization for Convolution Vision Architectures
-================================================================
+Hyperparameter Optimization for Convolutional Vision Architectures
+==================================================================
 
 This package provides a [Theano](http://www.deeplearning.net/software/theano)-based implementation of convolutional networks
 as described in (Bergstra, Yamins, and Cox, 2013), which exposes many
