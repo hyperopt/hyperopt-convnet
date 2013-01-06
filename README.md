@@ -13,7 +13,7 @@ architectural hyperparameters for optimization by
 
    * A Python/Numpy/Scipy stack.
      The Python package requirements are listed in
-     [requirements.txt](./requirements.txt).
+     requirements.txt.
 
    * Optional (but strongly recommended) is an NVIDIA GPU device at least as
      fast as, say, a GTX280, and CUDA. See Theano's documentation for setting
