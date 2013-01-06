@@ -33,8 +33,8 @@ architectural hyperparameters for optimization by
    `python setup.py install`
 
    Consider installing this within your user account (`--user`) or within a
-   virtualenv to avoid installing this package system-wide, and requiring root
-   privileges.
+   virtualenv to avoid installing this package system-wide, and to avoid
+   needing root privileges.
 
 
 # Testing
