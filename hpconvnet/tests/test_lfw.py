@@ -1,17 +1,19 @@
 import os
 
+import numpy as np
+
 import hyperopt
 from hyperopt.base import use_obj_for_literal_in_memo
-import numpy as np
 from hyperopt import pyll
+
 from skdata import lfw
 
-from eccv12.slm import call_catching_pipeline_errors
-from eccv12.slm import USLM_Exception
-from eccv12.slm_visitor import SLM_Visitor
+from hpconvnet.slm import call_catching_pipeline_errors
+from hpconvnet.slm import USLM_Exception
+from hpconvnet.slm_visitor import SLM_Visitor
 
-from eccv12.lfw import build_search_space
-from eccv12.lfw import DataViewPlaceHolder
+from hpconvnet.lfw import build_search_space
+from hpconvnet.lfw import DataViewPlaceHolder
 
 def test_one(rseed=3):
     # -- TEST: max_n_per_class < 1100
@@ -19,9 +21,12 @@ def test_one(rseed=3):
     image_shape = data_view.image_pixels[0].shape
     assert image_shape == (250, 250, 3), image_shape
 
-    expr = build_search_space(max_n_features=16000, trn='DevTrain',
-            n_unsup=20, # -- TEST: small value here
-            )
+    expr = build_search_space(
+        max_n_features=16000,
+        trn='DevTrain',
+        bagging_fraction=1.0,
+        n_unsup=20, # -- TEST: small value here
+        )
     expr = pyll.as_apply(expr)
     pyll.stochastic.recursive_set_rng_kwarg(expr, np.random.RandomState(rseed))
     ctrl = hyperopt.Ctrl(trials=hyperopt.Trials())

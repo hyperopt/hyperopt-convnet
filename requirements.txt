@@ -16,3 +16,7 @@ shovel
 joblib
 networkx
 pillow
+skdata
+hyperopt
+scikit-image
+theano

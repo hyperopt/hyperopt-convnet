@@ -36,21 +36,30 @@ architectural hyperparameters for optimization by
    virtualenv to avoid installing this package system-wide, and to avoid
    needing root privileges.
 
+   Installing hyperopt-convnet will install a pile of Python packages,
+   which are listed in requirements.txt.
+   On my computer, I had to explicitly install a few packages, because
+   whatever the setup.py script was doing wasn't working (I still don't
+           understand python packaging...):
+   * `pip install numpy`,
+   * `pip install scipy`,
+   * `pip install matplotlib`
+
 
 # Testing
 
 If installation goes well, then you will now be able to import the `hpconvnet`
-module.
+module. The easiest way to test your installation is
 
-The quickest smoke test that things are set up properly is to just run a
-small-scale simulation on the cifar10 data set:
 
-`
-  THEANO_FLAGS=device=gpu shovel cifar10.small_random_run
-`
+```bash
+THEANO_FLAGS=device=gpu shovel lfw.random_driver  --max_n_per_class=20
+```
 
-A few larger end-to-end regression tests can be run from the
-`hpconvnet/tests/` folder.
+This command should not crash, it should (i) download LFW if necessary and
+then (ii) loop indefinitely doing random search on a tiny subset of the LFW
+training data.
+
 
 
 # Running An Experiment in Parallel with MongoDB
@@ -58,7 +67,7 @@ A few larger end-to-end regression tests can be run from the
 Running hyperparameter optimization on large convolutional networks for data
 sets such as [LFW](http://vis-www.cs.umass.edu/lfw/)
 and [CIFAR10](http://www.cs.toronto.edu/~kriz/cifar.html) takes a significant amount of time:
-expect it to take about a GPU-week.
+expect a search of a few hundred points to take about a GPU-week.
 This cannot be completely parallelized (Bayesian optimization works on the
 basis of feedback about the fitness landscape after all), but in my experience
 it can easily be parallelized 5-fold to 10-fold.
@@ -86,14 +95,15 @@ mongo](https://github.com/jaberg/hyperopt/wiki/Parallelizing-search).
    polls a work queue created there.
 
    `
-    shovel cifar10.random localhost PORT
+    shovel cifar10.random_driver localhost PORT
    `
 
 3. Start one or more generic hyperopt worker processes to crank through the
-   trials of the experiment.
+   trials of the experiment, pointing at the database that's written into the
+   shovel script, in this case:
 
    `
-   ssh WORKNODE hyperopt-mongo-worker --mongo=localhost:PORT/cifar_db1
+    ssh WORKNODE hyperopt-mongo-worker --mongo=localhost:PORT/cifar_db1
    `
 
    If you have a cluster with a queue system (e.g. Torque, PBS, etc.) then use
@@ -106,6 +116,70 @@ mongo](https://github.com/jaberg/hyperopt/wiki/Parallelizing-search).
    evaluation code is faulty and you should either fix it or at least catch the
    terminating exceptions).
 
+# Rough Guide to the Code
+
+* `shovel/{cifar10,lfw,mnist}.py` driver code for various data sets.
+  When you type `shovel lfw.foo` in bash, it will try to run the `foo` task in
+  the lfw.py file.
+
+* `hpconvnet/lfw.py` describes the search space and the objective function
+  that hyperopt.fmin requires to optimize LFW's view 1 data set.
+
+* `hpconvnet/cifar10.py` describes the search space and the objective function
+  that hyperopt.fmin requires to optimize CIFAR10 validation performance.
+
+* `hpconvnet/slm_visitor_esvc.py` provides a LearningAlgo (skdata-style) derived
+  from `SLM_Visitor` that does classification based on sklearn's SVC binary
+  SVM and a precomputed kernel. This is generally a good choice for data sets
+  without too many examples. The LFW experiments use this class.
+
+* `hpconvnet/slm_visitor_primal.py` has a LearningAlgo (skdata-style) derived
+  from `SLM_Visitor` that does classification based on a primal SVM solver.
+  This is generally a good choice for data sets with larger numbers of
+  examples. The MNIST and CIFAR10 experiments use this class.
+
+* `hpconvnet/slm_visitor.py` provides `SLM_Visitor`,
+  a LearningAlgo (skdata-style) base class
+  with image feature extraction code and several LearningAlgo interface
+  methods.
+
+* `hpconvnet/slm.py` - creates the "pipeline" part of the search space, which
+  describes the full set of possibilities for image feature extraction (the
+  full set of convolutional architectures). The `uslm_domain` function
+  returns this search space as a pyll graph.
+  Note also the `call_catching_pipeline_errors` function, which includes
+  `except` clauses for all known errors which may arise in the course of
+  evaluating that pyll graph.
+
+* `hpconvnet/pyll_slm.py` - defines many custom pyll.scope functions which
+  serve to describe the `uslm_domain` search space.
+
+The basic idea of the code is that the driver code (e.g. in shovel/lfw.py)
+defines a search space and an objective function for hyperopt.
+
+The search space is relatively complex, not only in terms of its size (238
+hyperparameters) but also in its internal logic: a "sample" from the search
+space is a dictionary that alongside some some simpler key-value pairs,
+contains a "pipeline" key whose value is itself a pyll graph (seriously, pyll
+has support for lambda expressions),
+which evaluates to a theano function, which can process images.
+
+The objective function is implemented by e.g. lfw.slm_visitor_lfw which
+allocates a LearningAlgo (an SLM_Visitor_ESVC instance called `visitor`)
+to handle most of the work.
+The lfw.slm_visitor_lfw routine passes a LearningAlgo
+to the LFW data set's "protocol" function, which
+walks the LearningAlgo through the various steps of an LFW experiment: showing
+it the right data at the right time, asking it to compute various statistics,
+and so on.
+When that's all done, lfw.slm_visitor_lfw asks the LearningAlgo to make
+a report (`visitor.hyperopt_rval()`) in the form of a dictionary.
+That dictionary is augmented with what hyperopt needs to see (loss and status
+keys) and passed back to hyperopt.
+
+
+There are other files too in the hpconvnet folder, but they are not so crucial
+to understanding the overall layout of logic and/or control flow.
 
 
 # References
