@@ -180,8 +180,8 @@ That dictionary is augmented with what hyperopt needs to see (loss and status
 keys) and passed back to hyperopt.
 
 
-There are other files too in the hpconvnet folder, but they are not so crucial
-to understanding the overall layout of logic and/or control flow.
+There are other files too in the hpconvnet folder, but these ones summarize
+the logic and control flow.
 
 
 # References
