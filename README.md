@@ -45,6 +45,8 @@ architectural hyperparameters for optimization by
    * `pip install scipy`,
    * `pip install matplotlib`
 
+4. Replace sklearn < 0.13 with git version (we need some new stuff in SVC).
+
 
 # Testing
 
