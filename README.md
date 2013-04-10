@@ -97,7 +97,7 @@ mongo](https://github.com/jaberg/hyperopt/wiki/Parallelizing-search).
    polls a work queue created there.
 
    `
-    shovel cifar10.random_driver localhost PORT
+    shovel cifar10.tpe_driver localhost PORT 0.0
    `
 
 3. Start one or more generic hyperopt worker processes to crank through the
@@ -105,8 +105,12 @@ mongo](https://github.com/jaberg/hyperopt/wiki/Parallelizing-search).
    shovel script, in this case:
 
    `
-    ssh WORKNODE hyperopt-mongo-worker --mongo=localhost:PORT/cifar_db1
+    ssh WORKNODE hyperopt-mongo-worker --mongo=localhost:PORT/DBNAME
    `
+
+   The PORT should match the one used to launch mongodb.
+   The DBNAME should match the one used in shovel/cifar10.py:make_trials,
+   which is "dbname" by default.
 
    If you have a cluster with a queue system (e.g. Torque, PBS, etc.) then use
    that system to schedule a few hyperopt-mongo-worker processes. When they
@@ -187,11 +191,11 @@ the logic and control flow.
 # References
 
 * J. Bergstra, D. Yamins, D. D. Cox (2013).
-  [Making a Science of Model Search](forthcoming),
-  in Proc. ICML. -- This paper describes the convolutional architectures
+  [Making a Science of Model Search: Hyperparameter Optimization in Hundreds of Dimensions for Vision Architectures](http://jmlr.csail.mit.edu/proceedings/papers/v28/bergstra13.pdf),
+  in Proc. ICML2013. -- This paper describes the convolutional architectures
   implemented in this software package, and the results you should expect from
   hyperparameter optimization.
 
 * J. Bergstra, R. Bardenet, Y. Bengio, B. Kegl (2011).
   [Algorithms for Hyper-parameter Optimization](http://books.nips.cc/papers/files/nips24/NIPS2011_1385.pdf)
-  In Proc. NIPS. -- This paper introduces the TPE hyperparameter optimization algorithm.
+  In Proc. NIPS2011. -- This paper introduces the TPE hyperparameter optimization algorithm.
