@@ -77,6 +77,8 @@ class PrimalVisitor(SLM_Visitor):
 
     def attach_obj_results(self):
         ctrl = self.ctrl
+        if ctrl.current_trial is None:
+            return
         att = ctrl.trials.trial_attachments(ctrl.current_trial)
         def helper(dct, prefix):
             for key, val in dct.items():

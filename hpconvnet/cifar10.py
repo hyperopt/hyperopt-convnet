@@ -67,7 +67,7 @@ def build_search_space(
                 ),
             'batchsize': batchsize,
             'max_n_features': max_n_features,
-            'ctrl': hyperopt.Bandit.pyll_ctrl,
+            'ctrl': hyperopt.Domain.pyll_ctrl,
             'batched_lmap_speed_thresh': batched_lmap_speed_thresh,
             'bagging_fraction': bagging_fraction,
             }
@@ -95,6 +95,8 @@ def uslm_eval(
     data_fraction=1.0,
     assume_promising=False,
     ):
+    if ctrl.current_trial is None:
+        assume_promising = True
     data_view = StratifiedImageClassification(
             dtype='uint8',
             n_train=int(40000 * data_fraction),
